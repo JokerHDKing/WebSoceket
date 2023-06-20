@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="myDiagramDiv" style="width: 500px;height: 350px;background-color:#DAE4E4 "></div>
+
+<script src="../static/js/go.js"></script>
+
+<script>
+    var  $=go.GraphObject.make;
+
+    //第一步：创建图表
+    var  myDiagram=$(go.Diagram,"myDiagramDiv");//创建图表在页面上画图
+
+    //2.创建一个绩点，内容为A
+    var  node= $(go.Node,$(go.TextBlock, {text: "Abhkoghki"}));
+
+    //3.将节点添加到图标中
+    myDiagram.add(node)
+
+</script>
+</body>
+</html>

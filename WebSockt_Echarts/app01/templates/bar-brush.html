@@ -1,0 +1,191 @@
+<!--
+	此示例下载自 https://echarts.apache.org/examples/zh/editor.html?c=bar-brush&random=7cf9iaz2w1
+-->
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+  
+  <script type="text/javascript" src="../static/js/echarts.min.js"></script>
+  <!-- Uncomment this line if you want to dataTool extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.1/dist/extension/dataTool.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use gl extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to echarts-stat extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use map
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/china.js"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js"></script>
+  -->
+  <!-- Uncomment these two lines if you want to use bmap extension
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=YOUR_API_KEY"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.1/dist/extension/bmap.min.js"></script>
+  -->
+
+  <script >
+
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+
+    var app = {};
+    
+    var option;
+
+    let xAxisData =["人文与新媒体学院","外国语学院","艺术学院","教育与体育学院","经济与管理学院","法学院","马克思主义学院","信息与数学学院","物理与光电工程学院","化学与环境工程学院","生命科学学院","机械工程学院","电子信息学院","计算机科学学院","城市建设学院","资源与环境学院","地球物理与石油资源学院","地球科学学院","石油工程学院","农学院","园艺园林学院","动物科学学院","医学部","第一临床医学院","第二临床医学院","艺术与传媒学院","教师教育学院"];
+let data1 = [];
+let data2 = [];
+let data3 = [];
+let data4 = [];
+let data5 = [];
+
+
+{#for (let i = 0; i < 27; i++) {#}
+{##}
+  {#data1.push(+(Math.random() * 2).toFixed(2));#}
+{#  data2.push(+(Math.random() * 5).toFixed(2));#}
+{#  data3.push(+(Math.random() + 0.3).toFixed(2));#}
+{#  data4.push(+Math.random().toFixed(2));#}
+{#  data5.push(+Math.random().toFixed(2));}#}
+
+var emphasisStyle = {
+  itemStyle: {
+    shadowBlur: 10,
+    shadowColor: 'rgba(0,0,0,0.3)'
+  }
+};
+
+
+option = {
+  title:{
+	show:true,
+	text:'每周院系/年级借阅图书实时统计',
+	left:'30%'
+  },	
+  legend: {
+    data: ['2019级', '2020级', '2021级', '2022级','生均'],
+    left: '60%'
+  },
+
+  tooltip: {},
+  xAxis: {
+    axisLabel: { interval: 0, rotate: 30 },
+    data: xAxisData,
+    name: 'X Axis',
+    axisLine: { onZero: true },
+    splitLine: { show: true },
+    splitArea: { show: false }
+  },
+  yAxis: {
+  
+  },
+  grid: {
+	top:100,
+    bottom: 100
+  },
+  series: [
+    {
+      name: '2019级',
+      type: 'bar',
+      stack: 'one',
+      emphasis: emphasisStyle,
+      data: data1
+    },
+    {
+      name: '2020级',
+      type: 'bar',
+      stack: 'two',
+      emphasis: emphasisStyle,
+      data:data2
+    },
+    {
+      name: '2021级',
+      type: 'bar',
+      stack: 'three',
+      emphasis: emphasisStyle,
+      data: data3
+    },
+    {
+      name: '2022级',
+      type: 'bar',
+      stack: 'four',
+      emphasis: emphasisStyle,
+      data: data5
+    },
+    {
+      name: '生均',
+      type: 'bar',
+      stack: 'five',
+      emphasis: emphasisStyle,
+      data: data5
+    }
+  ]
+};
+//WebSocket 部分代码
+    var socket=new WebSocket("ws://127.0.0.1:8000/bar/123/");
+    socket.onopen=function (){
+        alert("WebSocket连接成功")
+    }
+    //连接成功之后接收消息
+    {#socket.onmessage=function (msg) {#}
+    {#    alert("开始接收信息")}#}
+    socket.onerror=function () {
+        alert("连接失败")
+    }
+socket.onmessage=function (event) {
+    {#alert("开始接收信息")#}
+    var data=JSON.parse(event.data);
+    console.log(data)
+    data1=data['2019'];
+    data2=data['2020'];
+    data3=data['2021'];
+    data4=data['2022'];
+    data5=data['生均'];
+
+    option.series[0].data=data1;
+    option.series[1].data=data2;
+    option.series[2].data=data3;
+    option.series[3].data=data4;
+    option.series[4].data=data5;
+    {#console.log(data)#}
+    myChart.setOption(option)
+    }
+myChart.on('brushSelected', function (params) {
+  var brushed = [];
+  var brushComponent = params.batch[0];
+  for (var sIdx = 0; sIdx < brushComponent.selected.length; sIdx++) {
+    var rawIndices = brushComponent.selected[sIdx].dataIndex;
+    brushed.push('[Series ' + sIdx + '] ' + rawIndices.join(', '));
+  }
+  myChart.setOption({
+    title: {
+      backgroundColor: '#333',
+      text: 'SELECTED DATA INDICES: \n' + brushed.join('\n'),
+      bottom: 0,
+      right: '10%',
+      width: 100,
+      textStyle: {
+        fontSize: 12,
+        color: '#fff'
+      }
+    }
+  });
+});
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>
