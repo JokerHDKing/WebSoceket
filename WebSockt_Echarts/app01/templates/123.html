@@ -1,0 +1,149 @@
+<!--
+	此示例下载自 https://echarts.apache.org/examples/zh/editor.html?c=bar-brush&random=7cf9iaz2w1
+-->
+<!DOCTYPE html>
+<html lang="zh-CN" style="height: 100%">
+<head>
+  <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+  <div id="container" style="height: 100%"></div>
+
+
+  <script type="text/javascript" src="../static/js/echarts.min.js"></script>
+  <!-- Uncomment this line if you want to dataTool extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.1/dist/extension/dataTool.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use gl extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts-gl@2/dist/echarts-gl.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to echarts-stat extension
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts-stat@latest/dist/ecStat.min.js"></script>
+  -->
+  <!-- Uncomment this line if you want to use map
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/china.js"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js"></script>
+  -->
+  <!-- Uncomment these two lines if you want to use bmap extension
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&ak=YOUR_API_KEY"></script>
+  <script type="text/javascript" src="https://fastly.jsdelivr.net/npm/echarts@5.4.1/dist/extension/bmap.min.js"></script>
+  -->
+
+  <script type="text/javascript">
+    var dom = document.getElementById('container');
+    var myChart = echarts.init(dom, null, {
+      renderer: 'canvas',
+      useDirtyRect: false
+    });
+    var app = {};
+
+    var option;
+
+    let xAxisData = [];
+let data1 = [];
+let data2 = [];
+let data3 = [];
+let data4 = [];
+for (let i = 0; i < 10; i++) {
+  xAxisData.push('Class' + i);
+  data1.push(+(Math.random() * 2).toFixed(2));
+  data2.push(+(Math.random() * 5).toFixed(2));
+  data3.push(+(Math.random() + 0.3).toFixed(2));
+  data4.push(+Math.random().toFixed(2));
+}
+var emphasisStyle = {
+  itemStyle: {
+    shadowBlur: 10,
+    shadowColor: 'rgba(0,0,0,0.3)'
+  }
+};
+option = {
+  legend: {
+    data: ['bar', 'bar2', 'bar3', 'bar4'],
+    left: '10%'
+  },
+  brush: {
+    toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
+    xAxisIndex: 0
+  },
+  toolbox: {
+    feature: {
+      magicType: {
+        type: ['stack']
+      },
+      dataView: {}
+    }
+  },
+  tooltip: {},
+  xAxis: {
+    data: xAxisData,
+    name: 'X Axis',
+    axisLine: { onZero: true },
+    splitLine: { show: false },
+    splitArea: { show: false }
+  },
+  yAxis: {},
+  grid: {
+    bottom: 100
+  },
+  series: [
+    {
+      name: 'bar',
+      type: 'bar',
+      stack: 'one',
+      emphasis: emphasisStyle,
+      data: data1
+    },
+    {
+      name: 'bar2',
+      type: 'bar',
+      stack: 'two',
+      emphasis: emphasisStyle,
+      data: data2
+    },
+    {
+      name: 'bar3',
+      type: 'bar',
+      stack: 'three',
+      emphasis: emphasisStyle,
+      data: data3
+    },
+    {
+      name: 'bar4',
+      type: 'bar',
+      stack: 'four',
+      emphasis: emphasisStyle,
+      data: data4
+    }
+  ]
+};
+myChart.on('brushSelected', function (params) {
+  var brushed = [];
+  var brushComponent = params.batch[0];
+  for (var sIdx = 0; sIdx < brushComponent.selected.length; sIdx++) {
+    var rawIndices = brushComponent.selected[sIdx].dataIndex;
+    brushed.push('[Series ' + sIdx + '] ' + rawIndices.join(', '));
+  }
+  myChart.setOption({
+    title: {
+      backgroundColor: '#333',
+      text: 'SELECTED DATA INDICES: \n' + brushed.join('\n'),
+      bottom: 0,
+      right: '10%',
+      width: 100,
+      textStyle: {
+        fontSize: 12,
+        color: '#fff'
+      }
+    }
+  });
+});
+
+    if (option && typeof option === 'object') {
+      myChart.setOption(option);
+    }
+
+    window.addEventListener('resize', myChart.resize);
+  </script>
+</body>
+</html>
